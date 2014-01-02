@@ -37,7 +37,11 @@ public class RaspberryPi {
     Thread m_thread;
     private boolean m_enabled =false;
     private boolean m_run = true;
-
+    
+    /**
+     * Used to interface the RaspberryPi's Thread to the Robot's Subsystem and Commands
+     * All fields need to be static, and all methods need to be synchronized and static.
+     */
     public static class DataKeeper {
         private static int m_distance = 0;
         private static int m_offset = 0;
@@ -96,12 +100,12 @@ public class RaspberryPi {
                         report = true;
                         try {
                             String[] data = m_raspberryPi.tokenizeData(m_raspberryPi.getRawData()); //Get and examine Data
-                            time = Timer.getFPGATimestamp();
+                            time = Timer.getFPGATimestamp(); //Timestamp used to check if data was updated from outside thread (through DataKeeper)
                             if(data.length < 2) { //Error Check
-                                report = false;
+                                report = false; //If a remote was made
                             } else {
                                 try {
-                                    distance = Integer.parseInt(data[1]); //Get data
+                                    distance = Integer.parseInt(data[1]); //Get data and parse it to proper data types
                                     offset = Integer.parseInt(data[0]);
                                 } catch(NumberFormatException ex) {
                                     report = false;
@@ -210,7 +214,7 @@ public class RaspberryPi {
      * @throws IOException 
      */
     public synchronized String getRawData() throws IOException {
-        byte[] input;
+        byte[] input; //temporary holder
         
         if (m_connected) {
             m_os.write('G'); //request Data
@@ -218,7 +222,7 @@ public class RaspberryPi {
             
             if(m_is.available() <= bufferSize) {
                 input = new byte[m_is.available()]; //storage space sized to fit!
-                m_receivedData = new byte[m_is.available()];
+                m_receivedData = new byte[m_is.available()]; //using stream to simply null detection
                 m_is.read(input); //Read in data from Pi
                 for(int i = 0; (input != null) && (i < input.length); i++) {
                     m_receivedData[i] = input[i]; //transfer input to full size storage
@@ -243,7 +247,7 @@ public class RaspberryPi {
     }
     
     /**
-     * Separates input String into many Strings based on the delimiter given
+     * Separates input String into many Strings based on the delimiter given above
      * @param input String to be tokenized
      * @return String Array of Tokenized Input String
      */
