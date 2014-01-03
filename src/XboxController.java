@@ -88,8 +88,8 @@ public class XboxController extends GenericHID implements IInputOutput {
         private static final int kStart_val = 8;
         private static final int kLeftStick_val = 9;
         private static final int kRightStick_val = 10;
-        private static final int kRTrigger_val = 11;
-        private static final int kLTrigger_val = 12;
+        private static final int kRightTrigger_val = 11;
+        private static final int kLeftTrigger_val = 12;
         
         private ButtonType(int value) {
             this.value = value;
@@ -143,12 +143,12 @@ public class XboxController extends GenericHID implements IInputOutput {
         /**
          * Button: Right Trigger
          */
-        public static final ButtonType kRTrigger = new ButtonType(kRTrigger_val);
+        public static final ButtonType kRightTrigger = new ButtonType(kRightTrigger_val);
         
         /**
          * Button: Left Trigger
          */
-        public static final ButtonType kLTrigger = new ButtonType(kLTrigger_val);
+        public static final ButtonType kLeftTrigger = new ButtonType(kLeftTrigger_val);
         
         /**
          * Button: Start
@@ -246,7 +246,7 @@ public class XboxController extends GenericHID implements IInputOutput {
      * @return State of the button
      */
     public boolean getRawButton(int button) {
-        if(button == ButtonType.kRTrigger.value) { //Abstracted Buttons from Analog Axis
+        if(button == ButtonType.kRightTrigger.value) { //Abstracted Buttons from Analog Axis
             if(getThrottle() <= -.6) {
                 return true;
             }
@@ -254,7 +254,7 @@ public class XboxController extends GenericHID implements IInputOutput {
                 return false;
             }
         }
-        if(button == ButtonType.kLTrigger.value) { //Abstracted Buttons from Analog Axis
+        if(button == ButtonType.kLeftTrigger.value) { //Abstracted Buttons from Analog Axis
             if(getThrottle() >= .6) {
                 return true;
             }
@@ -281,9 +281,9 @@ public class XboxController extends GenericHID implements IInputOutput {
      */
     public boolean getTrigger(Hand hand) {
         if(hand == Hand.kLeft) {
-            return getButton(ButtonType.kLTrigger);
+            return getButton(ButtonType.kLeftTrigger);
         } else if(hand == Hand.kRight) {
-            return getButton(ButtonType.kRTrigger);
+            return getButton(ButtonType.kRightTrigger);
         } else {
             return false;
         }
