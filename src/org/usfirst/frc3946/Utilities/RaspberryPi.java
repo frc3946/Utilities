@@ -1,12 +1,5 @@
 package org.usfirst.frc3946.Utilities;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-//You may want to add this class to a package, we recommend:
-//package org.usfirst.frc3946.Utilities;
-
 import com.sun.squawk.util.StringTokenizer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Utility;
@@ -18,23 +11,24 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.SocketConnection;
 
 /**
- *
+ * Interface with a RaspberryPi, or any other Networked Computer(Cubieboard, BeagleBone Black, Driver Station, ect.), over a TCP Socket Connection running in its own thread.
+ * The Socket connection is placed into it's own thread and must be interfaced through the static DataKeeper subclass.
  * @author Gustave Michel
  */
 public class RaspberryPi {
     
-    private String url = "socket://10.39.46.12:10000";
-    private int bufferSize = 64;
-    private char delimiter = ',';
+    private String url = "socket://10.39.46.12:10000"; //change to use team's selected IP and Port
+    private int bufferSize = 64; //If you need more bytes than this, go for it, but wow, lots of data.
+    private char delimiter = ','; //The character used to separate data in the socket stream.
     
-    private SocketConnection m_socket;
+    private SocketConnection m_socket; //Connection from which the Input and Output streams are created
     private InputStream m_is;
     private OutputStream m_os;
     
-    String m_rawData;
-    byte[] m_receivedData;
-    
-    private boolean m_connected = false;
+    byte[] m_receivedData; //The bytes received from the Socket
+    String m_rawData; //String data to be parsed
+        
+    private boolean m_connected = false; //if the pi is connected
     
     Thread m_thread;
     private boolean m_enabled =false;
@@ -45,10 +39,11 @@ public class RaspberryPi {
      * All fields need to be static, and all methods need to be synchronized and static.
      */
     public static class DataKeeper {
-        private static int m_distance = 0;
-        private static int m_offset = 0;
-        private static double m_time = 0;
-        private static boolean m_report = false;
+        private static int m_distance = 0; //data we are getting from the connection,
+        private static int m_offset = 0;  //you can change to fit your purposes
+        
+        private static double m_time = 0; //when the last report was filed
+        private static boolean m_report = false;  //if a report was filed previously
         
         public static synchronized void setReport(boolean report) {
             m_report = report;
@@ -83,6 +78,9 @@ public class RaspberryPi {
         }
     }
     
+    /**
+     * The thread in which the RaspberryPi Socket Connection data acquisition and parsing is run.
+     */
     private class RaspberryPiThread extends Thread {
         RaspberryPi m_raspberryPi;
         public int distance;
@@ -158,7 +156,10 @@ public class RaspberryPi {
         m_connected = true;
         
     }
-    
+    /**
+     * Used to safely close out the socket stream object becfore reconnecting, this will not stop the thread from trying to re-connect.
+     * @throws IOException 
+     */
     public synchronized void disconnect() throws IOException {
         m_socket.close();
         m_is.close();

@@ -1,12 +1,5 @@
 package org.usfirst.frc3946.Utilities;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-//You may want to add this class to a package, we recommend:
-//package org.usfirst.frc3946.Utilities;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.parsing.IInputOutput;
