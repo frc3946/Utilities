@@ -2,7 +2,6 @@ package org.usfirst.frc3946.Utilities;
 
 import com.sun.squawk.util.StringTokenizer;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Utility;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,7 +86,11 @@ public class RaspberryPi {
         public int offset;
         public double time;
         private boolean report;
-    
+        
+        /**
+         * Init thread for the pi socket to run in
+         * @param raspberryPi Pi to execute in thread
+         */
         public RaspberryPiThread(RaspberryPi raspberryPi) {
             super("RaspberryPiSocket");
             m_raspberryPi = raspberryPi;
@@ -136,6 +139,9 @@ public class RaspberryPi {
         }
     }
     
+    /**
+     * Constructor
+     */
     public RaspberryPi() {
         m_enabled = false;
         m_thread = new RaspberryPiThread(this);
@@ -149,6 +155,10 @@ public class RaspberryPi {
         m_thread.start();
     }
     
+    /**
+     * Attempts to connect to the Socket Server
+     * @throws IOException
+     */
     public synchronized void connect() throws IOException {
         m_socket = (SocketConnection) Connector.open(url);//, Connector.READ_WRITE, true);
         m_is = m_socket.openInputStream();
@@ -157,7 +167,7 @@ public class RaspberryPi {
         
     }
     /**
-     * Used to safely close out the socket stream object becfore reconnecting, this will not stop the thread from trying to re-connect.
+     * Used to safely close out the socket stream object before reconnecting, this will not stop the thread from trying to re-connect.
      * @throws IOException 
      */
     public synchronized void disconnect() throws IOException {
@@ -167,6 +177,10 @@ public class RaspberryPi {
         m_connected = false;
     }
     
+    /**
+     * Checks if the Socket Connection is Open
+     * @return if the connection is available
+     */
     public synchronized boolean isConnected() {
         //need to actually test the connection 
         //to figure out if we're connected or not
@@ -183,6 +197,10 @@ public class RaspberryPi {
         return m_connected;
     }
     
+    /**
+     * If the Socket Thread is running
+     * @return if the socket thread is running
+     */
     public synchronized boolean isEnabled() {
         return m_enabled;
     }
@@ -203,10 +221,16 @@ public class RaspberryPi {
         return DataKeeper.getReport();
     }
     
+    /**
+     * Enables the Thread Execution
+     */
     public synchronized void start() {
         m_enabled = true;
     }
     
+    /**
+     * Disables the Thread Execution
+     */
     public synchronized void stop() {
         m_enabled = false;
     }
